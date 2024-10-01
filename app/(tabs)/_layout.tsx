@@ -1,37 +1,38 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
+import { useApp } from "@provider/app.provider";
+import { Redirect, Slot, Stack, Tabs } from "expo-router";
+import { ScrollView, Text, View } from "native-base";
+import React from "react";
 
-import { TabBarIcon } from '@/components/navigation/TabBarIcon';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+const TabsLayout = () => {
+  const { user, isAuthenticated } = useApp();
 
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  if (!isAuthenticated && !user) {
+    return <Redirect href={"/login"} />;
+  }
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-      }}>
+        tabBarActiveTintColor: "#FFA001",
+        tabBarInactiveTintColor: "#CDCDE0",
+        tabBarShowLabel: false,
+        tabBarStyle: {
+          backgroundColor: "#161622",
+          borderTopWidth: 1,
+          borderTopColor: "#232533",
+          height: 84,
+        },
+      }}
+    >
       <Tabs.Screen
-        name="index"
+        name="home"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'code-slash' : 'code-slash-outline'} color={color} />
-          ),
+          title: "Home",
+          headerShown: false,
         }}
       />
     </Tabs>
   );
-}
+};
+
+export default TabsLayout;
