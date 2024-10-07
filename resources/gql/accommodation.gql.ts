@@ -3,12 +3,12 @@ import { GqlPaginateModel } from "@lib/graphql/model";
 import { AccommodationModel } from "@resources/model/accommodation.model";
 
 export function useGetAccommodationList() {
-  const model = new GqlPaginateModel("userAccommodationList", AccommodationModel);
+  const model = new GqlPaginateModel("userPropertyList", AccommodationModel);
 
   const [trigger, { items, ...result }] = useGqlQueryPaginate<typeof model.nodes>();
 
   function execute() {
-    model.setParams("userAccommodationList", { sort: "-created_at" });
+    model.setParams("userPropertyList", { sort: "-created_at" });
 
     return trigger(model.query());
   }

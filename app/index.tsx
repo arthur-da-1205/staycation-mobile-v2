@@ -1,18 +1,11 @@
 import { useApp } from "@provider/app.provider";
-import { Redirect, Slot, useRouter } from "expo-router";
-import React, { useEffect } from "react";
-import { ScrollView, StatusBar, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Redirect, useRouter } from "expo-router";
+import React from "react";
 
 const Index = () => {
-  const { isAuthenticated, user, setUser } = useApp();
-  const router = useRouter();
+  const { isAuthenticated, user } = useApp();
 
-  return isAuthenticated && user ? (
-    <Redirect href="/home" />
-  ) : (
-    <Redirect href="/login" />
-  );
+  return !isAuthenticated ? <Redirect href="/login" /> : <Redirect href="/home" />;
 };
 
 export default Index;

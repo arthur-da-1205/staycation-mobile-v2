@@ -12,7 +12,7 @@ export type { ApolloQueryResult, DefaultContext, FetchResult, MutationOptions, O
 
 const httpLink = new HttpLink({
   // uri: process.env.GQL_URL,
-  uri: "https://4bbc-158-140-172-75.ngrok-free.app/graphql", // TODO: should get value from .env
+  uri: "https://a78e-66-96-225-132.ngrok-free.app/graphql", // TODO: should get value from .env
   fetchOptions: {
     reactNative: { textSreaming: true },
   },
