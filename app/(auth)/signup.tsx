@@ -2,31 +2,33 @@ import Space from "@components/ui/space/space-component";
 import { Feather, Fontisto } from "@expo/vector-icons";
 import { useToaster } from "@hooks/useToast";
 import { useApp } from "@provider/app.provider";
-import { useAuthLoginMutation } from "@resources/gql/auth.gql";
+import { useAuthSignupMutation } from "@resources/gql/auth.gql";
 import { UserModel } from "@resources/model/user.model";
 import { useRouter } from "expo-router";
 import { Field, Formik } from "formik";
-import { Box, Button, Center, FormControl, HStack, Heading, Icon, Input, Link, Pressable, Text, VStack } from "native-base";
+import { Box, Button, Center, FormControl, Heading, Icon, Input, Link, Pressable, Text, VStack } from "native-base";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Yup from "yup";
 
-const LoginScreen = () => {
+const SignupScreen: React.FC = () => {
   const router = useRouter();
   const [showPass, setShowPass] = useState(false);
 
   const { setToken, setUser } = useApp();
   const toast = useToaster();
-  const [authLogin, { data: authData, error: authError }] = useAuthLoginMutation();
 
-  const loginValidationSchema = Yup.object().shape({
+  const [authRegister, { data: authData, error: authError }] = useAuthSignupMutation();
+
+  const registerValidationSchema = Yup.object().shape({
     email: Yup.string().email().required(),
     password: Yup.string().required("at least 8 characters"),
+    name: Yup.string().required(),
   });
 
   const onSubmit = (values: any) => {
-    authLogin({ email: values.email, password: values.password }).then((res) => {
-      const { access_token, user } = res.data?.data?.userLogin || {};
+    authRegister({ email: values.email, name: values.name, password: values.password }).then((res) => {
+      const { access_token, user } = res.data?.data?.userRegister || {};
 
       if (res.error) {
         console.log(res.error);
@@ -61,7 +63,7 @@ const LoginScreen = () => {
               color: "warmGray.50",
             }}
           >
-            Welcome Back!
+            Welcome!
           </Heading>
           <Heading
             mt="1"
@@ -72,35 +74,25 @@ const LoginScreen = () => {
             fontWeight="medium"
             size="xs"
           >
-            Sign in to continue!
-          </Heading>
-          <Heading
-            mt="1"
-            _dark={{
-              color: "warmGray.200",
-            }}
-            color="coolGray.600"
-            fontWeight="medium"
-            size="xs"
-          >
-            Enter your email address and password.
+            Let's travel without worry!
           </Heading>
 
           <Formik
             initialValues={{
               email: "",
               password: "",
+              name: "",
             }}
             onSubmit={(values, { resetForm }) => {
               onSubmit(values);
               resetForm();
             }}
-            validationSchema={loginValidationSchema}
+            validationSchema={registerValidationSchema}
             validateOnMount
             validateOnChange
           >
             {({ handleChange, handleBlur, handleSubmit, errors, values, touched }) => (
-              <VStack space={3} mt="5">
+              <VStack space={2} mt="5">
                 <FormControl>
                   <Field
                     component={Input}
@@ -116,6 +108,25 @@ const LoginScreen = () => {
                   {errors.email && touched.email ? (
                     <Text fontSize="xs" color="danger.500">
                       {errors.email}
+                    </Text>
+                  ) : null}
+                </FormControl>
+                <Space height={6} />
+                <FormControl>
+                  <Field
+                    component={Input}
+                    w="100%"
+                    p="8px"
+                    name="name"
+                    InputLeftElement={<Icon ml="10px" as={<Feather name="user" size={24} color="black" />} name="home" />}
+                    placeholder="Your Name"
+                    onChangeText={handleChange("name")}
+                    onBlur={handleBlur("name")}
+                    value={values.name}
+                  />
+                  {errors.email && touched.email ? (
+                    <Text fontSize="xs" color="danger.500">
+                      {errors.name}
                     </Text>
                   ) : null}
                 </FormControl>
@@ -166,7 +177,7 @@ const LoginScreen = () => {
                   isDisabled={!!errors.email || !!errors.password}
                   onPress={() => handleSubmit()}
                 >
-                  Sign in
+                  Sign Up
                 </Button>
 
                 <VStack mt="6" justifyContent="center">
@@ -178,11 +189,11 @@ const LoginScreen = () => {
                       color: "warmGray.200",
                     }}
                   >
-                    Don't have an account yet?
+                    Already have an accont?
                   </Text>
                   <Space height={20} />
-                  <Button variant="outline" colorScheme="blueGray" onPress={() => router.push("/signup")}>
-                    Sign Up
+                  <Button variant="outline" colorScheme="blueGray" onPress={() => router.push("/login")}>
+                    Sign In
                   </Button>
                 </VStack>
               </VStack>
@@ -194,4 +205,4 @@ const LoginScreen = () => {
   );
 };
 
-export default LoginScreen;
+export default SignupScreen;
